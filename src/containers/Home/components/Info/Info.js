@@ -15,14 +15,14 @@ export default class Info extends Component {
   render() {
     const {
       index, onSetting, onClose,
-      data: { rotate, x, y, width, height, },
+      data: { rotate, x, y, width, height, name },
     } = this.props;
 
     return (
       <div className="info">
         <div className="header">
           <span>
-            { index + 1 }
+            { name }
           </span>
           <Button
             shape="circle"

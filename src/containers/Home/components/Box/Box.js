@@ -17,7 +17,7 @@ export default class Box extends Component {
   render() {
     const {
       index, scale,
-      data: { rotate, width, height },
+      data: { rotate, width, height, name },
     } = this.props;
 
     const style = {
@@ -28,7 +28,7 @@ export default class Box extends Component {
 
     return (
       <div className="box" style={style}>
-        {index + 1}
+        { name }
       </div>
     );
   }

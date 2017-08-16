@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Layout, Button, Modal, InputNumber } from 'antd';
+import { Layout, Button, Modal, Input, InputNumber } from 'antd';
 
 import './Menubar.less';
 
@@ -8,6 +8,7 @@ const { Header } = Layout;
 
 const DEFAULT_BOX = {
   rotate: 0,
+  name: '',
   x: 0,
   y: 0,
   width: 1000,
@@ -38,10 +39,11 @@ export default class Menubar extends Component {
   }
 
   handleAdd = () => {
-    const { rotate, x, y, width, height } = this.state;
+    const { rotate, name, x, y, width, height } = this.state;
 
     this.props.onAdd({
       rotate,
+      name,
       x,
       y,
       width,
@@ -52,7 +54,7 @@ export default class Menubar extends Component {
   }
 
   render() {
-    const { x, y, width, height } = this.state;
+    const { rotate, name, x, y, width, height } = this.state;
 
     return (
       <div className="menubar">
@@ -73,6 +75,14 @@ export default class Menubar extends Component {
           onCancel={this.toggle}
         >
           <div className="addContent">
+            <div className="row">
+              <div className="column">
+                名稱：<Input onChange={e => this.onSetting('name', e.target.value)} value={name} />
+              </div>
+              <div className="column">
+                旋轉角度：<InputNumber min={0} onChange={value => this.onSetting('rotate', value)} value={rotate} />
+              </div>
+            </div>
             <div className="row">
               <div className="column">
                 X：<InputNumber min={0} onChange={value => this.onSetting('x', value)} value={x} />
