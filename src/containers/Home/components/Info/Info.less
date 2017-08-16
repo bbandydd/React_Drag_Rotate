@@ -4,13 +4,27 @@
   background-color: #fff;
   border-radius: 5px;
 
-  .title {
+  .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
 
     span {
       font-size: 18px;
+    }
+  }
+  .row {
+    margin-bottom: 10px;
+
+    &:last-child {
+      margin-bottom: 0px;
+    }
+
+    .title {
+      display: inline-block;
+      text-align: right;
+      width: 60px;
+      margin-right: 5px;
     }
   }
 }

@@ -74,19 +74,19 @@ export default class Menubar extends Component {
         >
           <div className="addContent">
             <div className="row">
-              <div>
-                X: <InputNumber min={0} onChange={value => this.onSetting('x', value)} value={x} />
+              <div className="column">
+                X：<InputNumber min={0} onChange={value => this.onSetting('x', value)} value={x} />
               </div>
-              <div>
-                Y: <InputNumber min={0} onChange={value => this.onSetting('y', value)} value={y} />
+              <div className="column">
+                Y：<InputNumber min={0} onChange={value => this.onSetting('y', value)} value={y} />
               </div>
             </div>
             <div className="row">
-              <div>
-                寬度: <InputNumber min={1} onChange={value => this.onSetting('width', value)} value={width} />
+              <div className="column">
+                寬度：<InputNumber min={1} onChange={value => this.onSetting('width', value)} value={width} />
               </div>
-              <div>
-                高度: <InputNumber min={1} onChange={value => this.onSetting('height', value)} value={height} />
+              <div className="column">
+                高度：<InputNumber min={1} onChange={value => this.onSetting('height', value)} value={height} />
               </div>
             </div>
           </div>

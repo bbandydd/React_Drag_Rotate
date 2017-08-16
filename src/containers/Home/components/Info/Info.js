@@ -20,7 +20,7 @@ export default class Info extends Component {
 
     return (
       <div className="info">
-        <div className="title">
+        <div className="header">
           <span>
             { index + 1 }
           </span>
@@ -31,11 +31,25 @@ export default class Info extends Component {
           />
         </div>
         <div>
-          <p>旋轉角度： <InputNumber min={0} max={360} onChange={value => onSetting(index, 'rotate', value)} value={rotate} /></p>
-          <p>X： <InputNumber min={0} onChange={value => onSetting(index, 'x', value)} value={x} /></p>
-          <p>Y： <InputNumber min={0} onChange={value => onSetting(index, 'y', value)} value={y} /></p>
-          <p>寬度： { width }</p>
-          <p>高度： { height }</p>
+          <p className="row">
+            <span className="title">旋轉角度：</span>
+            <InputNumber min={0} max={360} onChange={value => onSetting(index, 'rotate', value)} value={rotate} />
+          </p>
+          <p className="row">
+            <span className="title">X：</span>
+            <InputNumber min={0} onChange={value => onSetting(index, 'x', value)} value={x} /></p>
+          <p className="row">
+            <span className="title">Y：</span>
+            <InputNumber min={0} onChange={value => onSetting(index, 'y', value)} value={y} />
+          </p>
+          <p className="row">
+            <span className="title">寬度：</span>
+            { width }
+          </p>
+          <p className="row">
+            <span className="title">高度：</span>
+            { height }
+          </p>
         </div>
       </div>
     );

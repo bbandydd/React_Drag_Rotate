@@ -77,7 +77,6 @@ export default class Home extends Component {
                     index={index}
                     data={data}
                     scale={scale}
-                    onSetting={this.handleSetting}
                   />
                 )
               }
