@@ -70,13 +70,14 @@ export default class Home extends Component {
             <div style={{ textAlign: 'right', marginBottom: '10px' }}>
               <Tag color="#404040">1 : {scale}</Tag>
             </div>
-            <div className="canvas">
+            <div className="canvas" style={{ position: 'relative' }}>
               {
                 boxList.map((data, index) =>
                   <Box
                     index={index}
                     data={data}
                     scale={scale}
+                    onSetting={this.handleSetting}
                   />
                 )
               }
