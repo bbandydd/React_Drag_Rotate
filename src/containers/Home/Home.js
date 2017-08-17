@@ -67,7 +67,7 @@ export default class Home extends Component {
             onAdd={this.handleAddBox}
           />
           <Content>
-            <div style={{ textAlign: 'right', marginBottom: '10px' }}>
+            <div style={{ textAlign: 'center', marginBottom: '10px' }}>
               <Tag color="#404040">1 : {scale}</Tag>
             </div>
             <div className="canvas" style={{ position: 'relative' }}>
