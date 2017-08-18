@@ -28,7 +28,8 @@ export default class Box extends Component {
     const style = {
       transform: `translate(${x}px, ${y}px) rotate(${rotate}deg)`,
       width: `${width / scale}px`,
-      height: `${height / scale}px`
+      height: `${height / scale}px`,
+      position: 'absolute',
     };
 
     return (
