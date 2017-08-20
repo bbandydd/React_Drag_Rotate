@@ -5,4 +5,31 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  .pop {
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+    position: absolute;
+    &.position1 {
+      background: red;
+      top: 0;
+      left: 0;
+    }
+    &.position2 {
+      background: purple;
+      top: 0;
+      right: 0;
+    }
+    &.position3 {
+      background: green;
+      bottom: 0;
+      left: 0;
+    }
+    &.position4 {
+      background: blue;
+      bottom: 0;
+      right: 0;
+    }
+  }
 }

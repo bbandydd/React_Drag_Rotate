@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Popover } from 'antd';
 import Draggable from 'react-draggable';
 
 import './Box.less';
@@ -14,17 +15,30 @@ export default class Box extends Component {
     CANVAS_HEIGHT: PropTypes.number,
   }
 
+  constructor(props) {
+    super(props);
+
+    const {
+      scale,
+      data: { width, height },
+    } = props;
+
+    this.state = {
+      BOX_WIDTH: width / scale,
+      BOX_HEIGHT: height / scale,
+    };
+  }
+
   onControlledDrag = (e, position, index) => {
     const {
-      scale, CANVAS_WIDTH, CANVAS_HEIGHT,
-      data: { rotate, width, height },
+      CANVAS_WIDTH, CANVAS_HEIGHT,
     } = this.props;
+
+    const { BOX_WIDTH, BOX_HEIGHT } = this.state;
 
     const BOX = {
       x: position.x,
       y: position.y,
-      width: width / scale,
-      height: height / scale,
     };
 
     // 防止超出左方邊線
@@ -34,10 +48,10 @@ export default class Box extends Component {
     if (BOX.y < 0) BOX.y = 0;
 
     // 防止超出右方邊線
-    if (BOX.x + BOX.width > CANVAS_WIDTH) BOX.x = CANVAS_WIDTH - BOX.width;
+    if (BOX.x + BOX_WIDTH > CANVAS_WIDTH) BOX.x = CANVAS_WIDTH - BOX_WIDTH;
 
     // 防止超出下方邊線
-    if (BOX.y + BOX.height > CANVAS_HEIGHT) BOX.y = CANVAS_HEIGHT - BOX.height;
+    if (BOX.y + BOX_HEIGHT > CANVAS_HEIGHT) BOX.y = CANVAS_HEIGHT - BOX_HEIGHT;
 
     this.props.onSetting(index, 'x', BOX.x);
     this.props.onSetting(index, 'y', BOX.y);
@@ -55,12 +69,19 @@ export default class Box extends Component {
       data: { rotate, width, height, name, x, y },
     } = this.props;
 
+    const { BOX_WIDTH, BOX_HEIGHT } = this.state;
+
     const style = {
       transform: `translate(${x}px, ${y}px) rotate(${rotate * -1}deg)`,
       width: `${width / scale}px`,
       height: `${height / scale}px`,
       position: 'absolute',
     };
+
+    const content1 = `(${x}, ${y})`;
+    const content2 = `(${x + BOX_WIDTH}, ${y})`;
+    const content3 = `(${x}, ${y + BOX_HEIGHT})`;
+    const content4 = `(${x + BOX_WIDTH}, ${y + BOX_HEIGHT})`;
 
     return (
       <Draggable
@@ -70,7 +91,19 @@ export default class Box extends Component {
       >
         <span>
           <div className="box" style={style}>
-            {name}
+            <Popover content={content1} trigger="hover">
+              <div className="pop position1" />
+            </Popover>
+            <Popover content={content2} trigger="hover">
+              <div className="pop position2" />
+            </Popover>
+            <Popover content={content3} trigger="hover">
+              <div className="pop position3" />
+            </Popover>
+            <Popover content={content4} trigger="hover">
+              <div className="pop position4" />
+            </Popover>
+            <span>{name}</span>
           </div>
         </span>
       </Draggable>
