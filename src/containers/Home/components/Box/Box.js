@@ -30,6 +30,11 @@ export default class Box extends Component {
   }
 
   onControlledDrag = (e, position, index) => {
+    this.props.onSetting(index, 'x', position.x);
+    this.props.onSetting(index, 'y', position.y);
+  }
+
+  onControlledStop = (e, position, index) => {
     const {
       CANVAS_WIDTH, CANVAS_HEIGHT,
     } = this.props;
@@ -41,17 +46,32 @@ export default class Box extends Component {
       y: position.y,
     };
 
+    const position1 = this.getActualPosition(1);
+    const position2 = this.getActualPosition(2);
+    const position3 = this.getActualPosition(3);
+    const position4 = this.getActualPosition(4);
+
+    const MIN = {
+      x: Math.min(position1.x, position2.x, position3.x, position4.x),
+      y: Math.min(position1.y, position2.y, position3.y, position4.y)
+    };
+
+    const MAX = {
+      x: Math.max(position1.x, position2.x, position3.x, position4.x),
+      y: Math.max(position1.y, position2.y, position3.y, position4.y)
+    };
+
     // 防止超出左方邊線
-    if (BOX.x < 0) BOX.x = 0;
+    if (MIN.x < 0) BOX.x = Math.abs(MIN.x);
 
     // 防止超出上方邊線
-    if (BOX.y < 0) BOX.y = 0;
+    if (MIN.y < 0) BOX.y = Math.abs(MIN.y);
 
     // 防止超出右方邊線
-    if (BOX.x + BOX_WIDTH > CANVAS_WIDTH) BOX.x = CANVAS_WIDTH - BOX_WIDTH;
+    if (MAX.x > CANVAS_WIDTH) BOX.x -= MAX.x - CANVAS_WIDTH;
 
     // 防止超出下方邊線
-    if (BOX.y + BOX_HEIGHT > CANVAS_HEIGHT) BOX.y = CANVAS_HEIGHT - BOX_HEIGHT;
+    if (MAX.y > CANVAS_HEIGHT) BOX.y -= MAX.y - CANVAS_HEIGHT;
 
     this.props.onSetting(index, 'x', BOX.x);
     this.props.onSetting(index, 'y', BOX.y);
@@ -109,7 +129,10 @@ export default class Box extends Component {
       y: (sin(rotate) * NEW_POSITION.x) + (cos(rotate) * NEW_POSITION.y),
     };
 
-    return `(${CENTER_POSITION.x + ROTATE_POSITION.x}, ${CENTER_POSITION.y + ROTATE_POSITION.y})`;
+    return {
+      x: Math.ceil(CENTER_POSITION.x + ROTATE_POSITION.x),
+      y: Math.ceil(CENTER_POSITION.y + ROTATE_POSITION.y),
+    };
   }
 
   render() {
@@ -127,24 +150,42 @@ export default class Box extends Component {
       position: 'absolute',
     };
 
+    const content1 = () => {
+      const position = this.getActualPosition(1);
+      return `(${position.x}, ${position.y})`;
+    };
+    const content2 = () => {
+      const position = this.getActualPosition(2);
+      return `(${position.x}, ${position.y})`;
+    };
+    const content3 = () => {
+      const position = this.getActualPosition(3);
+      return `(${position.x}, ${position.y})`;
+    };
+    const content4 = () => {
+      const position = this.getActualPosition(4);
+      return `(${position.x}, ${position.y})`;
+    };
+
     return (
       <Draggable
         bounds="parent"
         onDrag={(e, position) => this.onControlledDrag(e, position, index)}
+        onStop={(e, position) => this.onControlledStop(e, position, index)}
         position={{ x, y }}
       >
         <span>
           <div className="box" style={style}>
-            <Popover content={this.getActualPosition(1)} trigger="hover">
+            <Popover content={content1()} trigger="hover">
               <div className="pop position1" />
             </Popover>
-            <Popover content={this.getActualPosition(2)} trigger="hover">
+            <Popover content={content2()} trigger="hover">
               <div className="pop position2" />
             </Popover>
-            <Popover content={this.getActualPosition(3)} trigger="hover">
+            <Popover content={content3()} trigger="hover">
               <div className="pop position3" />
             </Popover>
-            <Popover content={this.getActualPosition(4)} trigger="hover">
+            <Popover content={content4()} trigger="hover">
               <div className="pop position4" />
             </Popover>
             <span>{name}</span>
