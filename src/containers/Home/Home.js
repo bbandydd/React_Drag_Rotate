@@ -10,6 +10,9 @@ import './Home.less';
 
 const { Sider, Content } = Layout;
 
+const CANVAS_WIDTH = 1000;
+const CANVAS_HEIGHT = 600;
+
 export default class Home extends Component {
   state = {
     boxList: [],
@@ -78,6 +81,8 @@ export default class Home extends Component {
                     data={data}
                     scale={scale}
                     onSetting={this.handleSetting}
+                    CANVAS_WIDTH={CANVAS_WIDTH}
+                    CANVAS_HEIGHT={CANVAS_HEIGHT}
                   />
                 )
               }

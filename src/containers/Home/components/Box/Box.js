@@ -10,13 +10,37 @@ export default class Box extends Component {
     data: PropTypes.object,
     scale: PropTypes.object,
     onSetting: PropTypes.func,
+    CANVAS_WIDTH: PropTypes.number,
+    CANVAS_HEIGHT: PropTypes.number,
   }
 
   onControlledDrag = (e, position, index) => {
-    const { x, y } = position;
+    const {
+      scale, CANVAS_WIDTH, CANVAS_HEIGHT,
+      data: { rotate, width, height },
+    } = this.props;
 
-    this.props.onSetting(index, 'x', x);
-    this.props.onSetting(index, 'y', y);
+    const BOX = {
+      x: position.x,
+      y: position.y,
+      width: width / scale,
+      height: height / scale,
+    };
+
+    // 防止超出左方邊線
+    if (BOX.x < 0) BOX.x = 0;
+
+    // 防止超出上方邊線
+    if (BOX.y < 0) BOX.y = 0;
+
+    // 防止超出右方邊線
+    if (BOX.x + BOX.width > CANVAS_WIDTH) BOX.x = CANVAS_WIDTH - BOX.width;
+
+    // 防止超出下方邊線
+    if (BOX.y + BOX.height > CANVAS_HEIGHT) BOX.y = CANVAS_HEIGHT - BOX.height;
+
+    this.props.onSetting(index, 'x', BOX.x);
+    this.props.onSetting(index, 'y', BOX.y);
 
     // 旋轉公式 以中心點為圓心，逆時針旋轉
     // x' = cos * x - sin * y
