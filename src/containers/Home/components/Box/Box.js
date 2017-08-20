@@ -55,33 +55,77 @@ export default class Box extends Component {
 
     this.props.onSetting(index, 'x', BOX.x);
     this.props.onSetting(index, 'y', BOX.y);
+  }
 
-    // 旋轉公式 以中心點為圓心，逆時針旋轉
-    // x' = cos * x - sin * y
-    // 中心點x + Math.round(Math.cos(90 / 180 * Math.PI) * 100) / 100 * 50 - Math.round(Math.sin(90 / 180 * Math.PI) * 100) / 100 * 50
-    // y' = sin * x + cos * y
-    // 中心點y + Math.round(Math.sin(90 / 180 * Math.PI) * 100) / 100 * 50 + Math.round(Math.cos(90 / 180 * Math.PI) * 100) / 100 * 50
+  /**
+   * 旋轉公式 以中心點為圓心，逆時針旋轉
+   * x' = cos * x - sin * y
+   * y' = sin * x + cos * y
+   */
+  getActualPosition = (POSITION) => {
+    const {
+      data: { rotate, x, y }
+    } = this.props;
+
+    const { BOX_WIDTH, BOX_HEIGHT } = this.state;
+
+    // 以中心點為圓心計算旋轉角度
+    const CENTER_POSITION = {
+      x: x + (BOX_WIDTH / 2),
+      y: y + (BOX_HEIGHT / 2),
+    };
+
+    // 以中心點為圓心，計算原座標於新圓心的座標
+    let NEW_POSITION;
+
+    if (POSITION === 1) { // 左上
+      NEW_POSITION = {
+        x: x - CENTER_POSITION.x,
+        y: y - CENTER_POSITION.y,
+      };
+    } else if (POSITION === 2) { // 右上
+      NEW_POSITION = {
+        x: CENTER_POSITION.x - x,
+        y: y - CENTER_POSITION.y,
+      };
+    } else if (POSITION === 3) { // 左下
+      NEW_POSITION = {
+        x: x - CENTER_POSITION.x,
+        y: CENTER_POSITION.y - y,
+      };
+    } else if (POSITION === 4) { // 右下
+      NEW_POSITION = {
+        x: CENTER_POSITION.x - x,
+        y: CENTER_POSITION.y - y,
+      };
+    }
+
+    const cos = deg => Math.round(Math.cos((deg / 180) * Math.PI) * 100) / 100;
+    const sin = deg => Math.round(Math.sin((deg / 180) * Math.PI) * 100) / 100;
+
+    // 套用旋轉公式計算
+    const ROTATE_POSITION = {
+      x: (cos(rotate) * NEW_POSITION.x) - (sin(rotate) * NEW_POSITION.y),
+      y: (sin(rotate) * NEW_POSITION.x) + (cos(rotate) * NEW_POSITION.y),
+    };
+
+    return `(${CENTER_POSITION.x + ROTATE_POSITION.x}, ${CENTER_POSITION.y + ROTATE_POSITION.y})`;
   }
 
   render() {
     const {
-      index, scale,
-      data: { rotate, width, height, name, x, y },
+      index,
+      data: { rotate, name, x, y },
     } = this.props;
 
     const { BOX_WIDTH, BOX_HEIGHT } = this.state;
 
     const style = {
-      transform: `translate(${x}px, ${y}px) rotate(${rotate * -1}deg)`,
-      width: `${width / scale}px`,
-      height: `${height / scale}px`,
+      transform: `translate(${x}px, ${y}px) rotate(${rotate}deg)`,
+      width: `${BOX_WIDTH}px`,
+      height: `${BOX_HEIGHT}px`,
       position: 'absolute',
     };
-
-    const content1 = `(${x}, ${y})`;
-    const content2 = `(${x + BOX_WIDTH}, ${y})`;
-    const content3 = `(${x}, ${y + BOX_HEIGHT})`;
-    const content4 = `(${x + BOX_WIDTH}, ${y + BOX_HEIGHT})`;
 
     return (
       <Draggable
@@ -91,16 +135,16 @@ export default class Box extends Component {
       >
         <span>
           <div className="box" style={style}>
-            <Popover content={content1} trigger="hover">
+            <Popover content={this.getActualPosition(1)} trigger="hover">
               <div className="pop position1" />
             </Popover>
-            <Popover content={content2} trigger="hover">
+            <Popover content={this.getActualPosition(2)} trigger="hover">
               <div className="pop position2" />
             </Popover>
-            <Popover content={content3} trigger="hover">
+            <Popover content={this.getActualPosition(3)} trigger="hover">
               <div className="pop position3" />
             </Popover>
-            <Popover content={content4} trigger="hover">
+            <Popover content={this.getActualPosition(4)} trigger="hover">
               <div className="pop position4" />
             </Popover>
             <span>{name}</span>
