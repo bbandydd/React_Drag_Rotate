@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { observable, action } from 'mobx';
+import { observer, inject } from 'mobx-react';
 import { Popover } from 'antd';
 import Draggable from 'react-draggable';
 import getActualPosition from 'utils/getActualPosition';
@@ -7,30 +9,29 @@ import getOffsetPosition from 'utils/getOffsetPosition';
 
 import './Box.less';
 
+@inject('boxStore')
+@observer
 export default class Box extends Component {
   static propTypes = {
+    boxStore: PropTypes.object,
     index: PropTypes.number,
     data: PropTypes.object,
-    scale: PropTypes.object,
     onSetting: PropTypes.func,
-    CANVAS_WIDTH: PropTypes.number,
-    CANVAS_HEIGHT: PropTypes.number,
   }
 
-  constructor(props) {
-    super(props);
+  @observable BOX_WIDTH = 0;
+  @observable BOX_HEIGHT = 0;
 
+  @action
+  componentDidMount() {
     const {
-      scale,
+      boxStore: { CANVAS },
       data: { width, height },
-    } = props;
+    } = this.props;
 
-    this.state = {
-      BOX_WIDTH: width / scale,
-      BOX_HEIGHT: height / scale,
-    };
+    this.BOX_WIDTH = width / CANVAS.scale;
+    this.BOX_HEIGHT = height / CANVAS.scale;
   }
-
   onControlledDrag = (e, position, index) => {
     this.props.onSetting(index, 'x', position.x);
     this.props.onSetting(index, 'y', position.y);
@@ -38,21 +39,19 @@ export default class Box extends Component {
 
   onControlledStop = (e, position, index) => {
     const {
-      CANVAS_WIDTH, CANVAS_HEIGHT,
+      boxStore: { CANVAS },
       data: { rotate },
     } = this.props;
-
-    const { BOX_WIDTH, BOX_HEIGHT } = this.state;
 
     const BOX = {
       x: position.x,
       y: position.y,
-      BOX_WIDTH,
-      BOX_HEIGHT,
+      BOX_WIDTH: this.BOX_WIDTH,
+      BOX_HEIGHT: this.BOX_HEIGHT,
       rotate,
     };
 
-    const newBox = getOffsetPosition(BOX, CANVAS_WIDTH, CANVAS_HEIGHT);
+    const newBox = getOffsetPosition(BOX, CANVAS.width, CANVAS.height);
 
     this.props.onSetting(index, 'x', newBox.x);
     this.props.onSetting(index, 'y', newBox.y);
@@ -68,11 +67,15 @@ export default class Box extends Component {
       data: { rotate, x, y }
     } = this.props;
 
-    const { BOX_WIDTH, BOX_HEIGHT } = this.state;
+    const BOX = {
+      x,
+      y,
+      BOX_WIDTH: this.BOX_WIDTH,
+      BOX_HEIGHT: this.BOX_HEIGHT,
+      rotate,
+    };
 
-    return getActualPosition(POSITION, {
-      x, y, BOX_WIDTH, BOX_HEIGHT, rotate
-    });
+    return getActualPosition(POSITION, BOX);
   }
 
   render() {
@@ -81,17 +84,19 @@ export default class Box extends Component {
       data: { rotate, name, x, y },
     } = this.props;
 
-    const { BOX_WIDTH, BOX_HEIGHT } = this.state;
-
     const style = {
       transform: `translate(${x}px, ${y}px) rotate(${rotate}deg)`,
-      width: `${BOX_WIDTH}px`,
-      height: `${BOX_HEIGHT}px`,
+      width: `${this.BOX_WIDTH}px`,
+      height: `${this.BOX_HEIGHT}px`,
       position: 'absolute',
     };
 
     const BOX = {
-      x, y, BOX_WIDTH, BOX_HEIGHT, rotate,
+      x,
+      y,
+      BOX_WIDTH: this.BOX_WIDTH,
+      BOX_HEIGHT: this.BOX_HEIGHT,
+      rotate,
     };
 
     const content1 = () => {

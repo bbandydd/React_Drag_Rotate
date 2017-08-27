@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { observable, action } from 'mobx';
+import { observer, inject } from 'mobx-react';
 import { Layout, Tag } from 'antd';
 import 'antd/dist/antd.css';
 
@@ -10,59 +13,44 @@ import './Home.less';
 
 const { Sider, Content } = Layout;
 
-const CANVAS_WIDTH = 1000;
-const CANVAS_HEIGHT = 600;
-
+@inject('boxStore')
+@observer
 export default class Home extends Component {
-  state = {
-    boxList: [],
-    scale: 10,
+  static propTypes = {
+    boxStore: PropTypes.object,
   }
 
+  @observable boxList = [];
+
+  @action
   handleAddBox = (box) => {
-    const newBoxList = this.state.boxList;
-    newBoxList.push(box);
-
-    this.setState({
-      boxList: newBoxList,
-    });
+    this.boxList.push(box);
   }
 
+  @action
   handleaRemoveBox = (index) => {
-    const newBoxList = this.state.boxList;
-    newBoxList.splice(index, 1);
-
-    this.setState({
-      boxList: newBoxList,
-    });
+    this.boxList.splice(index, 1);
   }
 
+  @action
   handleSetting = (index, key, value) => {
-    const newBoxList = this.state.boxList;
-    newBoxList[index][key] = value;
-
-    this.setState({
-      boxList: newBoxList,
-    });
+    this.boxList[index][key] = value;
   }
 
   render() {
-    const { boxList, scale } = this.state;
+    const { boxStore: { CANVAS } } = this.props;
 
     return (
       <Layout className="home">
         <Sider>
           <div>
             {
-              boxList.map((data, index) =>
+              this.boxList.map((data, index) =>
                 <Info
                   index={index}
                   data={data}
-                  scale={scale}
                   onSetting={this.handleSetting}
                   onClose={this.handleaRemoveBox}
-                  CANVAS_WIDTH={CANVAS_WIDTH}
-                  CANVAS_HEIGHT={CANVAS_HEIGHT}
                 />
               )
             }
@@ -74,18 +62,15 @@ export default class Home extends Component {
           />
           <Content>
             <div style={{ textAlign: 'center', marginBottom: '10px' }}>
-              <Tag color="#404040">1 : {scale}</Tag>
+              <Tag color="#404040">1 : {CANVAS.scale}</Tag>
             </div>
             <div className="canvas" style={{ position: 'relative' }}>
               {
-                boxList.map((data, index) =>
+                this.boxList.map((data, index) =>
                   <Box
                     index={index}
                     data={data}
-                    scale={scale}
                     onSetting={this.handleSetting}
-                    CANVAS_WIDTH={CANVAS_WIDTH}
-                    CANVAS_HEIGHT={CANVAS_HEIGHT}
                   />
                 )
               }

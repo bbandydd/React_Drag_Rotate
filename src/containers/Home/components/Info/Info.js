@@ -1,52 +1,53 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { observable, action } from 'mobx';
+import { observer, inject } from 'mobx-react';
 import { Button, InputNumber } from 'antd';
 import getOffsetPosition from 'utils/getOffsetPosition';
 
 import './Info.less';
 
+@inject('boxStore')
+@observer
 export default class Info extends Component {
   static propTypes = {
+    boxStore: PropTypes.object,
     index: PropTypes.number,
     data: PropTypes.object,
     onSetting: PropTypes.func,
     onClose: PropTypes.func,
-    CANVAS_WIDTH: PropTypes.number,
-    CANVAS_HEIGHT: PropTypes.number,
-    scale: PropTypes.number,
   }
 
-  constructor(props) {
-    super(props);
+  @observable BOX_WIDTH = 0;
+  @observable BOX_HEIGHT = 0;
 
+  @action
+  componentDidMount() {
     const {
-      scale,
+      boxStore: { CANVAS },
       data: { width, height },
-    } = props;
+    } = this.props;
 
-    this.state = {
-      BOX_WIDTH: width / scale,
-      BOX_HEIGHT: height / scale,
-    };
+    this.BOX_WIDTH = width / CANVAS.scale;
+    this.BOX_HEIGHT = height / CANVAS.scale;
   }
 
   changeRotate = (index, rotate) => {
     const {
-      onSetting, CANVAS_WIDTH, CANVAS_HEIGHT,
+      onSetting,
+      boxStore: { CANVAS },
       data: { x, y },
     } = this.props;
-
-    const { BOX_WIDTH, BOX_HEIGHT } = this.state;
 
     const BOX = {
       x,
       y,
-      BOX_WIDTH,
-      BOX_HEIGHT,
+      BOX_WIDTH: this.BOX_WIDTH,
+      BOX_HEIGHT: this.BOX_HEIGHT,
       rotate,
     };
 
-    const newBox = getOffsetPosition(BOX, CANVAS_WIDTH, CANVAS_HEIGHT);
+    const newBox = getOffsetPosition(BOX, CANVAS.width, CANVAS.height);
 
     onSetting(index, 'rotate', rotate);
     onSetting(index, 'x', newBox.x);

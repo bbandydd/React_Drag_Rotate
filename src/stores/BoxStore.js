@@ -8,11 +8,4 @@ const DEFAULT_CANVAS = {
 
 export default class BoxStore {
   @observable CANVAS = { ...DEFAULT_CANVAS };
-
-  @computed get BOX() {
-    return {
-      width: this.CANVAS.width / this.CANVAS.scale,
-      height: this.CANVAS.height / this.CANVAS.scale,
-    };
-  }
 }
