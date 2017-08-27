@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { observable, action } from 'mobx';
 import { observer, inject } from 'mobx-react';
 import { Button, InputNumber } from 'antd';
-import getOffsetPosition from 'utils/getOffsetPosition';
 
 import './Info.less';
 
@@ -35,7 +34,7 @@ export default class Info extends Component {
   changeRotate = (index, rotate) => {
     const {
       onSetting,
-      boxStore: { CANVAS },
+      boxStore: { getOffsetPosition },
       data: { x, y },
     } = this.props;
 
@@ -47,7 +46,7 @@ export default class Info extends Component {
       rotate,
     };
 
-    const newBox = getOffsetPosition(BOX, CANVAS.width, CANVAS.height);
+    const newBox = getOffsetPosition(BOX);
 
     onSetting(index, 'rotate', rotate);
     onSetting(index, 'x', newBox.x);

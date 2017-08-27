@@ -4,8 +4,6 @@ import { observable, action } from 'mobx';
 import { observer, inject } from 'mobx-react';
 import { Popover } from 'antd';
 import Draggable from 'react-draggable';
-import getActualPosition from 'utils/getActualPosition';
-import getOffsetPosition from 'utils/getOffsetPosition';
 
 import './Box.less';
 
@@ -39,7 +37,7 @@ export default class Box extends Component {
 
   onControlledStop = (e, position, index) => {
     const {
-      boxStore: { CANVAS },
+      boxStore: { getOffsetPosition },
       data: { rotate },
     } = this.props;
 
@@ -51,7 +49,7 @@ export default class Box extends Component {
       rotate,
     };
 
-    const newBox = getOffsetPosition(BOX, CANVAS.width, CANVAS.height);
+    const newBox = getOffsetPosition(BOX);
 
     this.props.onSetting(index, 'x', newBox.x);
     this.props.onSetting(index, 'y', newBox.y);
@@ -64,6 +62,7 @@ export default class Box extends Component {
    */
   getActualPosition = (POSITION) => {
     const {
+      boxStore: { getActualPosition },
       data: { rotate, x, y }
     } = this.props;
 
@@ -81,6 +80,7 @@ export default class Box extends Component {
   render() {
     const {
       index,
+      boxStore: { getActualPosition },
       data: { rotate, name, x, y },
     } = this.props;
 

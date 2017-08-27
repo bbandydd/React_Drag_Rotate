@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { observable, action } from 'mobx';
+import { observer, inject } from 'mobx-react';
 import { Layout, Button, Modal, Input, InputNumber } from 'antd';
 
 import './Menubar.less';
@@ -15,37 +17,50 @@ const DEFAULT_BOX = {
   height: 1000,
 };
 
+@inject('boxStore')
+@observer
 export default class Menubar extends Component {
   static propTypes = {
+    boxStore: PropTypes.object,
     onAdd: PropTypes.func,
   }
 
-  state = {
-    visible: false,
-    ...DEFAULT_BOX,
-  }
+  @observable visible = false;
+  @observable BOX = { ...DEFAULT_BOX };
 
+  @action
   onSetting = (key, value) => {
-    this.setState({
-      [key]: value,
-    });
+    this.BOX[key] = value;
   }
 
+  @action
   toggle = () => {
-    this.setState({
-      visible: !this.state.visible,
-      ...DEFAULT_BOX,
-    });
+    this.visible = !this.visible;
+    this.BOX = { ...DEFAULT_BOX };
   }
 
   handleAdd = () => {
-    const { rotate, name, x, y, width, height } = this.state;
+    const {
+      boxStore: { CANVAS, getOffsetPosition },
+    } = this.props;
+
+    const { rotate, name, x, y, width, height } = this.BOX;
+
+    const BOX = {
+      x,
+      y,
+      BOX_WIDTH: width / CANVAS.scale,
+      BOX_HEIGHT: height / CANVAS.scale,
+      rotate,
+    };
+
+    const newBOX = getOffsetPosition(BOX);
 
     this.props.onAdd({
       rotate,
       name,
-      x,
-      y,
+      x: newBOX.x,
+      y: newBOX.y,
       width,
       height,
     });
@@ -54,7 +69,7 @@ export default class Menubar extends Component {
   }
 
   render() {
-    const { rotate, name, x, y, width, height } = this.state;
+    const { rotate, name, x, y, width, height } = this.BOX;
 
     return (
       <div className="menubar">
@@ -70,7 +85,7 @@ export default class Menubar extends Component {
           title="新增"
           okText="確定"
           cancelText="取消"
-          visible={this.state.visible}
+          visible={this.visible}
           onOk={this.handleAdd}
           onCancel={this.toggle}
         >
