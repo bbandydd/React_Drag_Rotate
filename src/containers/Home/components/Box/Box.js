@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Popover } from 'antd';
 import Draggable from 'react-draggable';
+import getActualPosition from 'utils/getActualPosition';
+import getOffsetPosition from 'utils/getOffsetPosition';
 
 import './Box.less';
 
@@ -37,6 +39,7 @@ export default class Box extends Component {
   onControlledStop = (e, position, index) => {
     const {
       CANVAS_WIDTH, CANVAS_HEIGHT,
+      data: { rotate },
     } = this.props;
 
     const { BOX_WIDTH, BOX_HEIGHT } = this.state;
@@ -44,37 +47,15 @@ export default class Box extends Component {
     const BOX = {
       x: position.x,
       y: position.y,
+      BOX_WIDTH,
+      BOX_HEIGHT,
+      rotate,
     };
 
-    const position1 = this.getActualPosition(1);
-    const position2 = this.getActualPosition(2);
-    const position3 = this.getActualPosition(3);
-    const position4 = this.getActualPosition(4);
+    const newBox = getOffsetPosition(BOX, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-    const MIN = {
-      x: Math.min(position1.x, position2.x, position3.x, position4.x),
-      y: Math.min(position1.y, position2.y, position3.y, position4.y)
-    };
-
-    const MAX = {
-      x: Math.max(position1.x, position2.x, position3.x, position4.x),
-      y: Math.max(position1.y, position2.y, position3.y, position4.y)
-    };
-
-    // 防止超出左方邊線
-    if (MIN.x < 0) BOX.x = Math.abs(MIN.x);
-
-    // 防止超出上方邊線
-    if (MIN.y < 0) BOX.y = Math.abs(MIN.y);
-
-    // 防止超出右方邊線
-    if (MAX.x > CANVAS_WIDTH) BOX.x -= MAX.x - CANVAS_WIDTH;
-
-    // 防止超出下方邊線
-    if (MAX.y > CANVAS_HEIGHT) BOX.y -= MAX.y - CANVAS_HEIGHT;
-
-    this.props.onSetting(index, 'x', BOX.x);
-    this.props.onSetting(index, 'y', BOX.y);
+    this.props.onSetting(index, 'x', newBox.x);
+    this.props.onSetting(index, 'y', newBox.y);
   }
 
   /**
@@ -89,50 +70,9 @@ export default class Box extends Component {
 
     const { BOX_WIDTH, BOX_HEIGHT } = this.state;
 
-    // 以中心點為圓心計算旋轉角度
-    const CENTER_POSITION = {
-      x: x + (BOX_WIDTH / 2),
-      y: y + (BOX_HEIGHT / 2),
-    };
-
-    // 以中心點為圓心，計算原座標於新圓心的座標
-    let NEW_POSITION;
-
-    if (POSITION === 1) { // 左上
-      NEW_POSITION = {
-        x: x - CENTER_POSITION.x,
-        y: y - CENTER_POSITION.y,
-      };
-    } else if (POSITION === 2) { // 右上
-      NEW_POSITION = {
-        x: CENTER_POSITION.x - x,
-        y: y - CENTER_POSITION.y,
-      };
-    } else if (POSITION === 3) { // 左下
-      NEW_POSITION = {
-        x: x - CENTER_POSITION.x,
-        y: CENTER_POSITION.y - y,
-      };
-    } else if (POSITION === 4) { // 右下
-      NEW_POSITION = {
-        x: CENTER_POSITION.x - x,
-        y: CENTER_POSITION.y - y,
-      };
-    }
-
-    const cos = deg => Math.round(Math.cos((deg / 180) * Math.PI) * 100) / 100;
-    const sin = deg => Math.round(Math.sin((deg / 180) * Math.PI) * 100) / 100;
-
-    // 套用旋轉公式計算
-    const ROTATE_POSITION = {
-      x: (cos(rotate) * NEW_POSITION.x) - (sin(rotate) * NEW_POSITION.y),
-      y: (sin(rotate) * NEW_POSITION.x) + (cos(rotate) * NEW_POSITION.y),
-    };
-
-    return {
-      x: Math.ceil(CENTER_POSITION.x + ROTATE_POSITION.x),
-      y: Math.ceil(CENTER_POSITION.y + ROTATE_POSITION.y),
-    };
+    return getActualPosition(POSITION, {
+      x, y, BOX_WIDTH, BOX_HEIGHT, rotate
+    });
   }
 
   render() {
@@ -150,20 +90,24 @@ export default class Box extends Component {
       position: 'absolute',
     };
 
+    const BOX = {
+      x, y, BOX_WIDTH, BOX_HEIGHT, rotate,
+    };
+
     const content1 = () => {
-      const position = this.getActualPosition(1);
+      const position = getActualPosition(1, BOX);
       return `(${position.x}, ${position.y})`;
     };
     const content2 = () => {
-      const position = this.getActualPosition(2);
+      const position = getActualPosition(2, BOX);
       return `(${position.x}, ${position.y})`;
     };
     const content3 = () => {
-      const position = this.getActualPosition(3);
+      const position = getActualPosition(3, BOX);
       return `(${position.x}, ${position.y})`;
     };
     const content4 = () => {
-      const position = this.getActualPosition(4);
+      const position = getActualPosition(4, BOX);
       return `(${position.x}, ${position.y})`;
     };
 

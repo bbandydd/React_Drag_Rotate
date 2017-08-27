@@ -58,8 +58,11 @@ export default class Home extends Component {
                 <Info
                   index={index}
                   data={data}
+                  scale={scale}
                   onSetting={this.handleSetting}
                   onClose={this.handleaRemoveBox}
+                  CANVAS_WIDTH={CANVAS_WIDTH}
+                  CANVAS_HEIGHT={CANVAS_HEIGHT}
                 />
               )
             }
