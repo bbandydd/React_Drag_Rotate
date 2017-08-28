@@ -15,6 +15,7 @@ const DEFAULT_BOX = {
   y: 0,
   width: 1000,
   height: 1000,
+  overlap: false,
 };
 
 @inject('boxStore')

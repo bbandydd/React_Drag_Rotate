@@ -81,7 +81,7 @@ export default class Box extends Component {
     const {
       index,
       boxStore: { getActualPosition },
-      data: { rotate, name, x, y },
+      data: { rotate, name, x, y, overlap },
     } = this.props;
 
     const style = {
@@ -124,7 +124,7 @@ export default class Box extends Component {
         position={{ x, y }}
       >
         <span>
-          <div className="box" style={style}>
+          <div className={`box ${overlap && 'overlap'}`} style={style}>
             <Popover content={content1()} trigger="hover">
               <div className="pop position1" />
             </Popover>

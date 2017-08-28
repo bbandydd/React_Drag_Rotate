@@ -102,4 +102,36 @@ export default class BoxStore {
       y: BOX.y,
     };
   }
+
+  /**
+   * 檢查是否重疊
+   */
+  isOverlap = (BOX, mx, my) => {
+    const p1 = this.getActualPosition(1, BOX); // Left top
+    const p2 = this.getActualPosition(2, BOX); // Right top
+    const p3 = this.getActualPosition(4, BOX); // Right bottom
+    const p4 = this.getActualPosition(3, BOX); // Left bottom
+
+    // Calculate edge normal vectors & C vars
+    const v1 = { x: -(p2.y - p1.y), y: (p2.x - p1.x) }; // Top
+    const v2 = { x: -(p3.y - p2.y), y: (p3.x - p2.x) }; // Right
+    const v3 = { x: -(p4.y - p3.y), y: (p4.x - p3.x) }; // Bottom
+    const v4 = { x: -(p1.y - p4.y), y: (p1.x - p4.x) }; // Left
+
+    const c1 = -((v1.x * p1.x) + (v1.y * p1.y));
+    const c2 = -((v2.x * p2.x) + (v2.y * p2.y));
+    const c3 = -((v3.x * p3.x) + (v3.y * p3.y));
+    const c4 = -((v4.x * p4.x) + (v4.y * p4.y));
+
+    // Define general line equation functions which return x or y coords, eg.: ax + by + c = 0
+    const isInner = (v, c, x, y) =>
+      ((v.x * x) + (v.y * y) + c) / Math.sqrt((v.x * v.x) + (v.y * v.y)) > 0;
+
+    // Check if mouse point is in shape coords using general line equation
+    if (isInner(v1, c1, mx, my) && isInner(v2, c2, mx, my) && isInner(v3, c3, mx, my) && isInner(v4, c4, mx, my)) {
+      return true;
+    }
+
+    return false;
+  }
 }
