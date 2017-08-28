@@ -37,14 +37,15 @@ export default class Home extends Component {
     this.boxList[index][key] = value;
   }
 
+  @action
   handleCheckOverlap = () => {
     const {
       boxStore: { getActualPosition, CANVAS }
     } = this.props;
 
-    let isOverlap = false;
-
     this.boxList.forEach((point, index) => {
+      let isOverlap = false;
+
       this.boxList[index].overlap = false;
 
       const checkOverlap = (mx, my) => {
@@ -81,7 +82,7 @@ export default class Home extends Component {
       checkOverlap(position3.x, position3.y);
       checkOverlap(position4.x, position4.y);
 
-      if (isOverlap) this.boxList[index].overlap = true;
+      this.boxList[index].overlap = isOverlap;
     });
   }
 
@@ -111,6 +112,8 @@ export default class Home extends Component {
           <Content>
             <div style={{ textAlign: 'center', marginBottom: '10px' }}>
               <Tag color="#404040">1 : {CANVAS.scale}</Tag>
+            </div>
+            <div style={{ textAlign: 'center', marginBottom: '10px' }}>
               <Button onClick={this.handleCheckOverlap}>檢查重疊</Button>
             </div>
             <div className="canvas" style={{ position: 'relative' }}>

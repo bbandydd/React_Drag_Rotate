@@ -45,7 +45,7 @@ export default class Menubar extends Component {
       boxStore: { CANVAS, getOffsetPosition },
     } = this.props;
 
-    const { rotate, name, x, y, width, height } = this.BOX;
+    const { rotate, name, x, y, width, height, overlap } = this.BOX;
 
     const BOX = {
       x,
@@ -53,6 +53,7 @@ export default class Menubar extends Component {
       BOX_WIDTH: width / CANVAS.scale,
       BOX_HEIGHT: height / CANVAS.scale,
       rotate,
+      overlap,
     };
 
     const newBOX = getOffsetPosition(BOX);
@@ -64,6 +65,7 @@ export default class Menubar extends Component {
       y: newBOX.y,
       width,
       height,
+      overlap,
     });
 
     this.toggle();
